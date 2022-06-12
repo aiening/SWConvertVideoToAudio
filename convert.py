@@ -19,12 +19,12 @@ def ffmpeg(src_path, dst_path):
     :param dst_path: 输出文件路径
     :return: bool值，转换结果成功or失败
     """
-    command = "ffmpeg -i '{}' -vn -ar 44100 -ac 2 -ab 32k -f mp3 '{}'".format(src_path, dst_path)
+    command = "ffmpeg -i {} -vn -ar 44100 -ac 2 -ab 32k -f mp3 {}".format(src_path, dst_path)
     try:
         subprocess.check_call(command, shell=True)
         is_success = True
     except subprocess.CalledProcessError as e:
-        print "error code: {}! shell command: {}".format(e.returncode, e.cmd)
+        print ("error code: {}! shell command: {}".format(e.returncode, e.cmd))
         is_success = False
     return is_success
 
@@ -50,10 +50,10 @@ def convert_dir(dir_path, output_dir, is_traverse=False):
         elif os.path.isdir(file_path):
             dir_list.append(file_path)
         else:
-            print "暂时不支持该路径：{}".format(file_path)
+            print ("暂时不支持该路径：{}".format(file_path))
 
     for file_path in sorted(file_list):
-        print "file_path:", file_path
+        print ("file_path:", file_path)
         result = convert_file(file_path, output_dir)
         if result:
             success_num += 1
@@ -61,7 +61,7 @@ def convert_dir(dir_path, output_dir, is_traverse=False):
             fail_num += 1
 
     for dir_path in sorted(dir_list):
-        print "dir_path:", dir_path
+        print ("dir_path:", dir_path)
         file_name = os.path.basename(dir_path)
         result = convert_dir(dir_path, os.path.join(output_dir, file_name), is_traverse)
         success_num += result[0]
@@ -102,9 +102,9 @@ def main():
     try:
         # 检测ffmpeg是否已安装
         result = subprocess.check_output("ffmpeg -version", shell=True)
-        print "ffmpeg:\n", result
+        print ("ffmpeg:\n", result)
     except subprocess.CalledProcessError:
-        print "ffmpeg未安装，请先安装:ffmpeg"
+        print ("ffmpeg未安装，请先安装:ffmpeg")
         return
 
     # 解析输入参数
@@ -129,13 +129,13 @@ def main():
         success_num, fail_num = convert_dir(file_path, output_dir,
                                             is_traverse=command_param.traverse)
     else:
-        assert False, u"file_path 不存在：'{}'".format(file)
+        assert (False, u"file_path 不存在：'{}'".format(file_path))
 
     end_time = datetime.now()
     cost_seconds = (end_time - start_time).seconds
-    print u"转换的成功文件数：{}个".format(success_num)
-    print u"转换的失败文件数：{}个".format(fail_num)
-    print u"总耗时:{}秒".format(cost_seconds)
+    print (u"转换的成功文件数：{}个".format(success_num))
+    print (u"转换的失败文件数：{}个".format(fail_num))
+    print (u"总耗时:{}秒".format(cost_seconds))
 
 
 if __name__ == '__main__':
